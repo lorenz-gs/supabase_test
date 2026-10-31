@@ -1,0 +1,19 @@
+{
+  "name": "supabase-test",
+  "version": "1.0.0",
+  "description": "Test app to learn Supabase and PostgREST API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node demo_supabase.js",
+    "dev:postgrest": "node demo_postgrest.js",
+    "dev:compare": "node demo_comparison.js",
+    "setup": "npm install"
+  },
+  "keywords": ["supabase", "postgrest", "demo", "tutorial"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.46.0",
+    "dotenv": "^16.4.5"
+  }
+}
