@@ -260,7 +260,7 @@
                 <input type="number" id="kingdomPlz" placeholder="e.g., 12345">
             </div>
             
-            <button onclick="createKingdom()">Create Kingdom</button>
+            <button id="createKingdomBtn">Create Kingdom</button>
             
             <div class="grid" id="kingdomList" style="margin-top: 20px;"></div>
         </div>
@@ -279,7 +279,7 @@
                 </select>
             </div>
             
-            <button onclick="createFurstentum()">Create Furstentum</button>
+            <button id="createFurstentumBtn">Create Furstentum</button>
             
             <div class="tree" id="furstenTree"></div>
         </div>
@@ -345,7 +345,7 @@
                           placeholder='{"name": "Test", "adresse_schloss": "Test", "plz_schloss": 12345}'></textarea>
             </div>
             
-            <button onclick="callPostgREST()">Call API</button>
+            <button id="callPostgRESTBtn">Call API</button>
             
             <div id="apiResult" style="margin-top: 15px; background: #111; padding: 15px; border-radius: 5px; overflow-x: auto;"></div>
         </div>
@@ -454,7 +454,7 @@
                     <p><strong>Created:</strong> ${new Date(kingdom.created_at).toLocaleDateString()}</p>
                     <span class="badge">${furstenCount} Furstentumer</span>
                     <div class="actions">
-                        <button onclick="deleteKingdom(${kingdom.id})" class="danger">Delete</button>
+                        <button class="danger" data-type="kingdom" data-id="${kingdom.id}">Delete</button>
                     </div>
                 `;
                 
@@ -611,7 +611,7 @@
                                     <div class="card" style="margin-bottom: 10px;">
                                         <p><strong>Furstentum ID:</strong> ${f.id}</p>
                                         <p><strong>Created:</strong> ${new Date(f.created_at).toLocaleDateString()}</p>
-                                        <button onclick="deleteFurstentum(${f.id})" class="danger" style="margin-top: 10px;">Delete</button>
+                                        <button class="danger" data-type="fursten" data-id="${f.id}" style="margin-top: 10px;">Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -694,8 +694,34 @@
             }
         }
         
-        // Initialize on page load
-        loadData();
+        // EVENT LISTENERS (CSP-compatible for GitHub Pages)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Static buttons
+            document.getElementById('createKingdomBtn')?.addEventListener('click', createKingdom);
+            document.getElementById('createFurstentumBtn')?.addEventListener('click', createFurstentum);
+            document.getElementById('callPostgRESTBtn')?.addEventListener('click', callPostgREST);
+            
+            // Dynamic buttons (event delegation for delete buttons)
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-id]');
+                if (!btn) return;
+                
+                const id = parseInt(btn.dataset.id);
+                const type = btn.dataset.type;
+                
+                if (type === 'kingdom') {
+                    e.preventDefault();
+                    deleteKingdom(id);
+                }
+                if (type === 'fursten') {
+                    e.preventDefault();
+                    deleteFurstentum(id);
+                }
+            });
+            
+            // Load initial data
+            loadData();
+        });
     </script>
 </body>
 </html>
