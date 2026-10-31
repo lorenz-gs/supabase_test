@@ -352,12 +352,13 @@
     </div>
 
     <script>
-        // Initialize Supabase client
+        // Configuration
         const supabaseUrl = 'http://supabasekong-leeowk1ndbq54hcemxvpzj5d.178.105.215.39.sslip.io';
         const supabaseKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc5MzQyODY4MCwiZXhwIjo0OTQ5MTAyMjgwLCJyb2xlIjoiYW5vbiJ9.UlKlUqw0n8bykBtzrZNE2mJtWBqvGf3u8oo7Dng9YO8';
-        const supabase = supabaseUrl && supabaseKey 
-            ? supabase.createClient(supabaseUrl, supabaseKey)
-            : null;
+        
+        // Create Supabase client - FIXED: Use destructuring to avoid naming conflict
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
         
         // State
         let kingdoms = [];
@@ -382,7 +383,7 @@
         }
         
         // Check if Supabase is configured
-        if (!supabase) {
+        if (!supabaseClient) {
             showMessage('error-kingdom', 
                 'Please configure your Supabase URL and Key at the top of this file.', 
                 true);
@@ -393,11 +394,11 @@
         
         // Load data on page load
         async function loadData() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             try {
                 // Load kingdoms
-                const { data: kingdomData, error: kingdomError } = await supabase
+                const { data: kingdomData, error: kingdomError } = await supabaseClient
                     .from('kingdom_lorenz_steffen')
                     .select('*')
                     .order('id', { ascending: true });
@@ -412,7 +413,7 @@
                 }
                 
                 // Load furstentumer
-                const { data: furstenData, error: furstenError } = await supabase
+                const { data: furstenData, error: furstenError } = await supabaseClient
                     .from('fuerstentuemer')
                     .select('*, kingdom_lorenz_steffen(*)')
                     .order('id', { ascending: true });
@@ -477,7 +478,7 @@
         
         // Create kingdom
         async function createKingdom() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             const name = document.getElementById('kingdomName').value.trim();
             const adresse = document.getElementById('kingdomAdresse').value.trim();
@@ -489,7 +490,7 @@
             }
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('kingdom_lorenz_steffen')
                     .insert({
                         name: name,
@@ -519,12 +520,12 @@
         
         // Delete kingdom
         async function deleteKingdom(id) {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             if (!confirm('Are you sure you want to delete this kingdom?')) return;
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('kingdom_lorenz_steffen')
                     .delete()
                     .eq('id', id);
@@ -542,7 +543,7 @@
         
         // Create furstentum
         async function createFurstentum() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             const kingdomId = document.getElementById('furstenKingdom').value;
             
@@ -552,7 +553,7 @@
             }
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('fuerstentuemer')
                     .insert({
                         parent_id: parseInt(kingdomId)
@@ -625,12 +626,12 @@
         
         // Delete furstentum
         async function deleteFurstentum(id) {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             if (!confirm('Are you sure you want to delete this furstentum?')) return;
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('fuerstentuemer')
                     .delete()
                     .eq('id', id);
